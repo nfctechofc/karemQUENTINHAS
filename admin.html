@@ -1,0 +1,962 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#680078">
+  <title>Painel Administrativo | Comida Caseira da Karen</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --purple: #680078;
+      --purple-dark: #480052;
+      --purple-light: #f5eafa;
+      --cream: #fffaf6;
+      --text: #302536;
+      --muted: #786d7c;
+      --border: #eadfeb;
+      --green: #247447;
+      --red: #a83248;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--text);
+      font-family: "DM Sans", Arial, sans-serif;
+    }
+
+    header {
+      background: var(--purple);
+      color: white;
+      padding: 22px;
+    }
+
+    .header-inner, main {
+      width: min(1150px, 92%);
+      margin: auto;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-family: Georgia, serif;
+      font-weight: normal;
+    }
+
+    header p { margin: 0; opacity: .88; }
+
+    main { padding: 28px 0 50px; }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 6px 25px #6800780a;
+    }
+
+    h2 { margin: 0 0 14px; font-size: 21px; }
+    h3 { margin: 0 0 8px; }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      color: var(--text);
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    button {
+      display: inline-block;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 9px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .primary { background: var(--purple); color: white; }
+    .primary:hover { background: var(--purple-dark); }
+    .soft { background: var(--purple-light); color: var(--purple); }
+    .accept { background: #e0f3e7; color: #205c3d; }
+    .reject, .delete-btn { background: #fae5e8; color: #982d42; }
+    .complete { background: #dff4e7; color: #164e29; }
+    .logout { background: white; color: var(--purple); }
+
+    .filters, .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--purple-light);
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .stat.highlight {
+      background: #e0f3e7;
+      color: #164e29;
+    }
+
+    .stat span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat.highlight span { color: #2b6644; }
+
+    .stat strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 22px;
+    }
+
+    .order {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 17px;
+      margin-top: 12px;
+    }
+
+    .details {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 30px;
+      font-size: 12px;
+      background: #eee;
+      white-space: nowrap;
+    }
+
+    .s-novo { background: #fff0cf; color: #785500; }
+    .s-preparando { background: #e9e1ff; color: #573a9a; }
+    .s-saiu_entrega { background: #dceeff; color: #245b91; }
+    .s-concluido { background: #dff4e7; color: #205c3d; }
+    .s-cancelado { background: #fae5e8; color: #982d42; }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hidden { display: none !important; }
+    .muted { color: var(--muted); }
+    .message { margin-top: 12px; font-size: 14px; }
+    .error { color: var(--red); }
+    .success { color: var(--green); }
+
+    .section-note {
+      margin: -5px 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .filters, .form-grid, .form-grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .stat { padding: 12px 9px; }
+      .stat strong { font-size: 18px; }
+      .panel { padding: 16px; }
+      header { padding: 19px 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <h1>Comida Caseira da Karen</h1>
+    <p>Painel administrativo · Pedidos, vendas e histórico</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- LOGIN -->
+  <section id="loginPanel" class="panel">
+    <h2>Acesso administrativo</h2>
+    <p class="muted">Entre com seu e-mail e sua senha.</p>
+
+    <form id="loginForm">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" required autocomplete="username">
+
+      <label for="password">Senha</label>
+      <input id="password" type="password" required autocomplete="current-password">
+
+      <br><br>
+      <button class="primary" type="submit">Entrar no painel</button>
+    </form>
+
+    <p id="loginMessage" class="message" role="status"></p>
+  </section>
+
+  <!-- PAINEL -->
+  <section id="dashboard" class="hidden">
+
+    <div class="panel">
+      <div class="topline">
+        <div>
+          <h2 style="margin-bottom:5px">Visão geral</h2>
+          <span class="muted">Pedidos sincronizados com o banco de dados</span>
+        </div>
+
+        <button id="refreshBtn" class="soft">Atualizar</button>
+        <button id="logoutBtn" class="logout">Sair</button>
+      </div>
+    </div>
+
+    <!-- MÊS -->
+    <div class="panel">
+      <div class="topline">
+        <label for="monthFilter" style="margin:0;font-size:14px">
+          Mês de referência das vendas:
+        </label>
+        <input type="month" id="monthFilter" style="max-width:240px">
+      </div>
+    </div>
+
+    <!-- INDICADORES -->
+    <div class="stats">
+
+      <div class="stat">
+        <span>Pedidos em aberto</span>
+        <strong id="openCount">0</strong>
+      </div>
+
+      <div class="stat">
+        <span>Pedidos concluídos no mês</span>
+        <strong id="completedCount">0</strong>
+      </div>
+
+      <div class="stat highlight">
+        <span id="revenueTitle">Faturamento do mês</span>
+        <strong id="monthRevenue">R$ 0,00</strong>
+      </div>
+
+      <div class="stat">
+        <span>Pedidos recebidos hoje</span>
+        <strong id="todayCount">0</strong>
+      </div>
+
+    </div>
+
+    <!-- VENDA MANUAL -->
+    <section class="panel">
+      <h2>Registrar venda manual</h2>
+      <p class="section-note">
+        Registre vendas feitas por telefone, presencialmente ou fora do site.
+      </p>
+
+      <form id="manualForm">
+
+        <div class="form-grid">
+          <div>
+            <label for="manualName">Nome do cliente</label>
+            <input id="manualName" required maxlength="120">
+          </div>
+
+          <div>
+            <label for="manualType">Recebimento</label>
+            <select id="manualType" required>
+              <option value="Retirada">Retirada</option>
+              <option value="Entrega">Entrega</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="manualAddressWrap" class="hidden">
+          <label for="manualAddress">Endereço de entrega</label>
+          <input id="manualAddress" maxlength="300">
+        </div>
+
+        <div class="form-grid three">
+          <div>
+            <label for="manualDish">Prato</label>
+            <input id="manualDish" required maxlength="160">
+          </div>
+
+          <div>
+            <label for="manualSize">Tamanho</label>
+            <select id="manualSize" required>
+              <option value="P">P</option>
+              <option value="M">M</option>
+              <option value="G">G</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="manualPrice">Valor da marmita (R$)</label>
+            <input id="manualPrice" type="number" min="0.01" step="0.01" required>
+          </div>
+        </div>
+
+        <label for="manualNotes">Observações (opcional)</label>
+        <textarea id="manualNotes" maxlength="1000"
+          placeholder="Ex.: pagamento em dinheiro, sem cebola..."></textarea>
+
+        <p class="muted" id="manualTotal">Total: R$ 0,00</p>
+
+        <button class="primary" type="submit">Salvar venda manual</button>
+        <p id="manualMessage" class="message" role="status"></p>
+
+      </form>
+    </section>
+
+    <!-- FILTROS -->
+    <section class="panel">
+      <h2>Filtros e histórico</h2>
+
+      <div class="filters">
+        <div>
+          <label for="dateFilter">Filtrar por data</label>
+          <input type="date" id="dateFilter">
+        </div>
+
+        <div>
+          <label for="statusFilter">Situação</label>
+          <select id="statusFilter">
+            <option value="all">Todos os pedidos</option>
+            <option value="novo">Novo</option>
+            <option value="preparando">Preparando</option>
+            <option value="saiu_entrega">Saiu para entrega</option>
+            <option value="concluido">Concluído</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+      </div>
+
+      <br>
+      <button id="clearFilters" class="soft" type="button">
+        Ver todo o histórico
+      </button>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="panel">
+      <div class="topline">
+        <h2 style="margin:0">Pedidos recebidos</h2>
+        <span class="muted" id="listCount"></span>
+      </div>
+
+      <p id="listMessage" class="muted">Carregando pedidos...</p>
+      <div id="ordersList"></div>
+    </section>
+
+  </section>
+</main>
+
+<script>
+  // CONFIGURAÇÃO SUPABASE
+  const SUPABASE_URL = "https://kijuuwswmvamkharpxso.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_rpsqLWRScz2YkF422YDD7A_cH06D8Ws";
+
+  const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  const $ = id => document.getElementById(id);
+
+  let orders = [];
+  let realtimeChannel = null;
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]);
+  }
+
+  function money(value) {
+    return Number(value || 0).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    });
+  }
+
+  function localDateString(date = new Date()) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function dateTimeBR(value) {
+    if (!value) return "—";
+
+    return new Date(value).toLocaleString("pt-BR", {
+      dateStyle: "short",
+      timeStyle: "short"
+    });
+  }
+
+  function statusLabel(status) {
+    return ({
+      novo: "Novo",
+      preparando: "Preparando",
+      saiu_entrega: "Saiu para entrega",
+      concluido: "Concluído",
+      cancelado: "Cancelado"
+    })[status] || status;
+  }
+
+  function showListMessage(text, error = false) {
+    $("listMessage").textContent = text;
+    $("listMessage").className = error ? "message error" : "muted";
+  }
+
+  function showFormMessage(id, text, error = false) {
+    $(id).textContent = text;
+    $(id).className = error ? "message error" : "message success";
+  }
+
+  // VERIFICAR ADMINISTRADOR
+  async function checkAdmin(user) {
+    const { data, error } = await db
+      .from("food_admins")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      await db.auth.signOut();
+      throw new Error("Este usuário não está autorizado a acessar o painel.");
+    }
+  }
+
+  // INICIAR PAINEL
+  async function startDashboard(user) {
+    await checkAdmin(user);
+
+    $("loginPanel").classList.add("hidden");
+    $("dashboard").classList.remove("hidden");
+
+    const now = new Date();
+
+    $("monthFilter").value =
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+    await loadOrders();
+
+    if (realtimeChannel) {
+      await db.removeChannel(realtimeChannel);
+    }
+
+    realtimeChannel = db
+      .channel("karen-orders-live")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "orders"
+      }, () => loadOrders())
+      .subscribe();
+  }
+
+  // CARREGAR PEDIDOS
+  async function loadOrders() {
+    showListMessage("Atualizando pedidos...");
+
+    const { data, error } = await db
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      showListMessage(
+        "Não foi possível carregar os pedidos: " + error.message,
+        true
+      );
+      return;
+    }
+
+    orders = data || [];
+    renderOrders();
+  }
+
+  // ATUALIZAR INDICADORES E LISTAGEM
+  function renderOrders() {
+    const date = $("dateFilter").value;
+    const status = $("statusFilter").value;
+
+    const filtered = orders.filter(item => {
+      const orderDate = item.created_at
+        ? localDateString(new Date(item.created_at))
+        : "";
+
+      return (!date || orderDate === date) &&
+        (status === "all" || item.status === status);
+    });
+
+    const today = localDateString();
+    const month = $("monthFilter").value || today.slice(0, 7);
+
+    const monthOrders = orders.filter(item =>
+      item.created_at &&
+      localDateString(new Date(item.created_at)).startsWith(month)
+    );
+
+    const completedMonth = monthOrders.filter(
+      item => item.status === "concluido"
+    );
+
+    const revenue = completedMonth.reduce(
+      (sum, item) => sum + Number(item.total || 0),
+      0
+    );
+
+    $("openCount").textContent = orders.filter(item =>
+      ["novo", "preparando", "saiu_entrega"].includes(item.status)
+    ).length;
+
+    $("completedCount").textContent = completedMonth.length;
+
+    $("todayCount").textContent = orders.filter(item =>
+      item.created_at &&
+      localDateString(new Date(item.created_at)) === today
+    ).length;
+
+    $("revenueTitle").textContent =
+      `Faturamento (${month.slice(5, 7)}/${month.slice(0, 4)})`;
+
+    $("monthRevenue").textContent = money(revenue);
+
+    $("listCount").textContent = `${filtered.length} pedido(s)`;
+
+    showListMessage(
+      filtered.length
+        ? "Pedidos encontrados."
+        : "Nenhum pedido encontrado."
+    );
+
+    $("ordersList").innerHTML = filtered.map(item => {
+      const actions = [];
+
+      if (item.status === "novo") {
+        actions.push(`
+          <button class="accept"
+            data-action="preparando" data-id="${item.id}">
+            Começar preparo
+          </button>
+        `);
+
+        actions.push(`
+          <button class="reject"
+            data-action="cancelado" data-id="${item.id}">
+            Cancelar
+          </button>
+        `);
+
+      } else if (item.status === "preparando") {
+
+        if (item.order_type === "Entrega") {
+          actions.push(`
+            <button class="soft"
+              data-action="saiu_entrega" data-id="${item.id}">
+              Saiu para entrega
+            </button>
+          `);
+        } else {
+          actions.push(`
+            <button class="complete"
+              data-action="concluido" data-id="${item.id}">
+              Concluir pedido
+            </button>
+          `);
+        }
+
+        actions.push(`
+          <button class="reject"
+            data-action="cancelado" data-id="${item.id}">
+            Cancelar
+          </button>
+        `);
+
+      } else if (item.status === "saiu_entrega") {
+
+        actions.push(`
+          <button class="complete"
+            data-action="concluido" data-id="${item.id}">
+            Marcar como concluído
+          </button>
+        `);
+
+        actions.push(`
+          <button class="reject"
+            data-action="cancelado" data-id="${item.id}">
+            Cancelar
+          </button>
+        `);
+
+      } else {
+
+        actions.push(`
+          <button class="soft"
+            data-action="novo" data-id="${item.id}">
+            Reabrir pedido
+          </button>
+        `);
+      }
+
+      actions.push(`
+        <button class="delete-btn"
+          data-action="delete" data-id="${item.id}">
+          Excluir
+        </button>
+      `);
+
+      return `
+        <article class="order">
+
+          <div class="topline">
+            <h3>
+              Pedido #${escapeHTML(item.id)}
+              · ${escapeHTML(item.customer_name)}
+            </h3>
+
+            <span class="status s-${escapeHTML(item.status)}">
+              ${escapeHTML(statusLabel(item.status))}
+            </span>
+          </div>
+
+          <div class="details">
+            🕒 ${dateTimeBR(item.created_at)}<br>
+            🍛 Prato: ${escapeHTML(item.dish)}<br>
+            📦 Tamanho: ${escapeHTML(item.size)}<br>
+            🚗 Recebimento: ${escapeHTML(item.order_type)}<br>
+
+            ${
+              item.order_type === "Entrega"
+                ? `📍 Endereço: ${escapeHTML(item.address || "Não informado")}<br>`
+                : ""
+            }
+
+            💰 Marmita: ${money(item.meal_price)}<br>
+            🛵 Entrega: ${money(item.delivery_fee)}<br>
+
+            <strong>💵 Total: ${money(item.total)}</strong><br>
+
+            ${item.is_manual ? "🧾 Venda manual<br>" : "🌐 Pedido pelo site<br>"}
+
+            📝 Observações: ${escapeHTML(item.notes || "Nenhuma")}
+          </div>
+
+          <div class="actions">
+            ${actions.join("")}
+          </div>
+
+        </article>
+      `;
+    }).join("");
+  }
+
+  // LOGIN
+  $("loginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    $("loginMessage").textContent = "Verificando acesso...";
+    $("loginMessage").className = "message";
+
+    const { data, error } = await db.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
+    });
+
+    if (error) {
+      $("loginMessage").textContent =
+        "Não foi possível entrar. Confira o e-mail e a senha.";
+
+      $("loginMessage").className = "message error";
+      return;
+    }
+
+    try {
+      await startDashboard(data.user);
+      $("loginMessage").textContent = "";
+
+    } catch (err) {
+      $("loginMessage").textContent = err.message;
+      $("loginMessage").className = "message error";
+    }
+  });
+
+  // SAIR
+  $("logoutBtn").addEventListener("click", async () => {
+    if (realtimeChannel) {
+      await db.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
+
+    await db.auth.signOut();
+
+    $("dashboard").classList.add("hidden");
+    $("loginPanel").classList.remove("hidden");
+    $("password").value = "";
+  });
+
+  $("refreshBtn").addEventListener("click", loadOrders);
+
+  $("dateFilter").addEventListener("change", renderOrders);
+  $("statusFilter").addEventListener("change", renderOrders);
+  $("monthFilter").addEventListener("change", renderOrders);
+
+  $("clearFilters").addEventListener("click", () => {
+    $("dateFilter").value = "";
+    $("statusFilter").value = "all";
+    renderOrders();
+  });
+
+  // ALTERAR STATUS E EXCLUIR PEDIDOS
+  $("ordersList").addEventListener("click", async event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const item = orders.find(
+      order => String(order.id) === button.dataset.id
+    );
+
+    if (!item) return;
+
+    const action = button.dataset.action;
+
+    if (action === "delete") {
+      if (!confirm(
+        `Deseja realmente excluir o pedido #${item.id}? Esta ação não pode ser desfeita.`
+      )) return;
+
+      button.disabled = true;
+
+      const { error } = await db
+        .from("orders")
+        .delete()
+        .eq("id", item.id);
+
+      if (error) {
+        alert("Não foi possível excluir: " + error.message);
+        button.disabled = false;
+        return;
+      }
+
+      await loadOrders();
+      return;
+    }
+
+    if (!confirm(
+      `Alterar o pedido #${item.id} para "${statusLabel(action)}"?`
+    )) return;
+
+    button.disabled = true;
+
+    const { error } = await db
+      .from("orders")
+      .update({ status: action })
+      .eq("id", item.id);
+
+    if (error) {
+      alert("Não foi possível atualizar o pedido: " + error.message);
+      button.disabled = false;
+      return;
+    }
+
+    await loadOrders();
+  });
+
+  // VENDA MANUAL
+  function manualDeliveryFee() {
+    return $("manualType").value === "Entrega" ? 6 : 0;
+  }
+
+  function updateManualTotal() {
+    const price = Number($("manualPrice").value || 0);
+    const fee = manualDeliveryFee();
+
+    $("manualTotal").textContent =
+      `Total: ${money(price + fee)} (inclui ${money(fee)} de entrega)`;
+  }
+
+  $("manualType").addEventListener("change", () => {
+    const delivery = $("manualType").value === "Entrega";
+
+    $("manualAddressWrap").classList.toggle("hidden", !delivery);
+    $("manualAddress").required = delivery;
+
+    updateManualTotal();
+  });
+
+  $("manualPrice").addEventListener("input", updateManualTotal);
+
+  $("manualForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const orderType = $("manualType").value;
+    const price = Number($("manualPrice").value);
+    const fee = manualDeliveryFee();
+    const address = $("manualAddress").value.trim();
+
+    if (!Number.isFinite(price) || price <= 0) {
+      showFormMessage(
+        "manualMessage",
+        "Informe um valor válido para a marmita.",
+        true
+      );
+      return;
+    }
+
+    if (orderType === "Entrega" && !address) {
+      showFormMessage(
+        "manualMessage",
+        "Informe o endereço para entrega.",
+        true
+      );
+      return;
+    }
+
+    const payload = {
+      customer_name: $("manualName").value.trim(),
+      order_type: orderType,
+      address: orderType === "Entrega" ? address : null,
+      dish: $("manualDish").value.trim(),
+      size: $("manualSize").value,
+      meal_price: price,
+      delivery_fee: fee,
+      total: price + fee,
+      status: "concluido",
+      is_manual: true,
+      notes: $("manualNotes").value.trim() || null
+    };
+
+    const submit = $("manualForm").querySelector(
+      'button[type="submit"]'
+    );
+
+    submit.disabled = true;
+
+    showFormMessage("manualMessage", "Salvando venda...");
+
+    const { error } = await db
+      .from("orders")
+      .insert(payload);
+
+    submit.disabled = false;
+
+    if (error) {
+      showFormMessage(
+        "manualMessage",
+        "Não foi possível salvar a venda: " + error.message,
+        true
+      );
+      return;
+    }
+
+    $("manualForm").reset();
+    $("manualType").value = "Retirada";
+    $("manualAddressWrap").classList.add("hidden");
+    $("manualAddress").required = false;
+
+    updateManualTotal();
+
+    showFormMessage(
+      "manualMessage",
+      "Venda manual registrada com sucesso!"
+    );
+
+    await loadOrders();
+  });
+
+  // RESTAURAR SESSÃO
+  async function restoreSession() {
+    const { data, error } = await db.auth.getSession();
+
+    if (error || !data.session) return;
+
+    try {
+      await startDashboard(data.session.user);
+
+    } catch (err) {
+      $("loginMessage").textContent = err.message;
+      $("loginMessage").className = "message error";
+
+      $("loginPanel").classList.remove("hidden");
+      $("dashboard").classList.add("hidden");
+    }
+  }
+
+  updateManualTotal();
+  restoreSession();
+</script>
+
+</body>
+</html>
