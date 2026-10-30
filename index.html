@@ -227,6 +227,339 @@
   position: relative;
   z-index: 1;
 }
+.hero-food {
+  animation: foodFloating 4s ease-in-out infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes foodFloating {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+
+  50% {
+    transform: translateY(-18px) rotate(1deg);
+  }
+}
+
+/* Movimento reduzido para quem prefere menos animações */
+@media (prefers-reduced-motion: reduce) {
+  .hero-food {
+    animation: none;
+  }
+}
+.food-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 6px solid #fff;
+  border-radius: 24px;
+  outline: 2px solid rgba(104, 0, 120, .25);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .22);
+  background: #fff;
+  touch-action: pan-y;
+}
+
+.food-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+}
+
+.food-slide img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+}
+.food-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.85);
+  color: #680078;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.food-arrow.prev {
+  left: 12px;
+}
+
+.food-arrow.next {
+  right: 12px;
+}
+
+.food-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  z-index: 3;
+}
+
+.food-dot {
+  width: 8px;
+  height: 8px;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255,255,255,.6);
+  cursor: pointer;
+  padding: 0;
+  transition: .3s;
+}
+
+.food-dot.active {
+  width: 22px;
+  background: white;
+}
+
+/* Flutuação da imagem */
+.food-carousel {
+  animation: foodFloating 4s ease-in-out infinite;
+}
+
+@keyframes foodFloating {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .food-carousel {
+    animation: none;
+  }
+}
+.food-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  /* Moldura externa */
+  border: 8px solid #fff;
+  border-radius: 30px;
+
+  /* Acabamento */
+  outline: 2px solid rgba(104, 0, 120, .25);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, .22),
+    inset 0 0 0 2px rgba(255, 255, 255, .6);
+
+  background: #fff;
+  touch-action: pan-y;
+}
+
+.food-carousel-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform .45s ease;
+}
+
+
+/* Botões com acabamento */
+.food-arrow {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #fff;
+  border-radius: 100%;
+  background: rgba(104, 0, 120, .85);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,.2);
+}
+
+/* Indicadores */
+.food-dot {
+  background: rgba(255,255,255,.55);
+  box-shadow: 0 2px 5px rgba(0,0,0,.2);
+}
+
+.food-dot.active {
+  background: #fff;
+}
+
+.extras-section {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin: 35px auto;
+  max-width: 1200px;
+}
+
+.extras-category h3 {
+  color: #680078;
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+  margin-bottom: 14px;
+}
+
+.extras-carousel {
+  overflow-x: auto;
+  cursor: grab;
+  scrollbar-width: thin;
+  scrollbar-color: #680078 #eee;
+  padding-bottom: 12px;
+}
+
+.extras-track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+}
+
+.extra-card {
+  width: 155px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 5px 16px rgba(0,0,0,.07);
+}
+
+.extra-card img {
+  width: 100%;
+  height: 115px;
+  object-fit: cover;
+  border-radius: 11px;
+}
+
+.extra-card h4 {
+  margin: 9px 0 4px;
+  font-size: 14px;
+  color: #29212b;
+}
+
+.extra-card p {
+  color: #680078;
+  font-weight: 700;
+  margin: 0;
+}
+.extras-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.extra-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #eadbea;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.extra-order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.extra-order-info strong {
+  font-size: 14px;
+  color: #310039;
+}
+
+.extra-order-info span {
+  font-size: 12px;
+  color: #777;
+}
+
+.extra-order-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.extra-order-actions button {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.extra-remove {
+  background: #ffe5e5;
+  color: #c62828;
+}
+.extras-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-extras-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.modal-extra {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 11px;
+  border: 1px solid #eadbea;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.modal-extra > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.modal-extra strong {
+  color: #310039;
+  font-size: 13px;
+}
+
+.modal-extra span {
+  color: #777;
+  font-size: 12px;
+}
+
+.modal-extra .add {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 10px;
+  background: #680078;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 380px) {
+  .modal-extra {
+    grid-template-columns: 1fr auto;
+  }
+
+  .modal-extra .add {
+    grid-column: 1 / -1;
+  }
+}
   </style>
 </head>
 <body>
@@ -255,13 +588,56 @@
           <div class="hero-points"><span><b>♡</b> Feito na hora</span><span><b>✿</b> Tempero caseiro</span><span><b>♧</b> Muito sabor</span></div>
         </div>
         <div class="hero-visual">
-          <img class="hero-food" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=85" alt="Refeição caseira colorida com legumes e frango">
-          <div class="round-stamp"><img
-  src="img/Gemini_Generated_Image_d6uc8gd6uc8gd6uc.jpg"
-  alt="Comida caseira da Karen"
-></div>
-        </div>
+
+  <div class="food-carousel" id="foodCarousel">
+
+    <div class="food-carousel-track">
+
+      <div class="food-slide">
+        <img
+          src="img\Gemini_Generated_Image_d6uc8gd6uc8gd6uc.jpg"
+          alt="Refeição caseira com legumes e frango"
+        >
       </div>
+
+      <div class="food-slide">
+        <img
+          src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1000&q=85"
+          alt="Prato de comida fresca"
+        >
+      </div>
+
+      <div class="food-slide">
+        <img
+          src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1000&q=85"
+          alt="Refeição com vegetais"
+        >
+      </div>
+
+      <div class="food-slide">
+        <img
+          src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1000&q=85"
+          alt="Prato especial"
+        >
+      </div>
+
+    </div>
+
+    <button class="food-arrow prev" aria-label="Imagem anterior">‹</button>
+    <button class="food-arrow next" aria-label="Próxima imagem">›</button>
+
+    <div class="food-dots"></div>
+
+  </div>
+
+  <div class="round-stamp">
+    <img
+      src="img/Gemini_Generated_Image_d6uc8gd6uc8gd6uc.jpg"
+      alt="Comida caseira da Karen"
+    >
+  </div>
+
+</div>
     </section>
 
     <section class="section" id="como-funciona">
@@ -367,7 +743,76 @@
       </div>
     </section>
 
-    
+    <section class="extras-section">
+
+  <div class="extras-category">
+    <h3>🥤 Bebidas</h3>
+
+    <div class="extras-carousel">
+      <div class="extras-track">
+        <div class="extra-card">
+          <img src="img/coca-lata.jpg" alt="Coca-Cola">
+          <h4>Coca-Cola Lata</h4>
+          <p>R$ 6,00</p>
+          
+        </div>
+
+        <div class="extra-card">
+          <img src="img/guarana.jpg" alt="Guaraná">
+          <h4>Guaraná</h4>
+          <p>R$ 5,00</p>
+          
+
+        </div>
+
+        <div class="extra-card">
+          <img src="img/suco.jpg" alt="Suco">
+          <h4>Suco Natural</h4>
+          <p>R$ 7,00</p>
+          
+        </div>
+
+         <div class="extra-card">
+          <img src="img/suco.jpg" alt="Suco">
+          <h4>Suco Natural</h4>
+          <p>R$ 7,00</p>
+           
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="extras-category">
+    <h3>🍰 Sobremesas</h3>
+
+    <div class="extras-carousel">
+      <div class="extras-track">
+        <div class="extra-card">
+          <img src="img/pudim.jpg" alt="Pudim">
+          <h4>Pudim</h4>
+          <p>R$ 7,00</p>
+          
+        </div>
+
+        <div class="extra-card">
+          <img src="img/mousse.jpg" alt="Mousse">
+          <h4>Mousse</h4>
+          <p>R$ 6,00</p>
+          
+        </div>
+
+        <div class="extra-card">
+          <img src="img/brownie.jpg" alt="Brownie">
+          <h4>Brownie</h4>
+          <p>R$ 8,00</p>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
 
     <section class="community"><div class="container community-inner"><p class="eyebrow">Seu almoço mais gostoso começa aqui</p><h2>Peça sua quentinha hoje!</h2><p>Consulte o cardápio do dia, valores e opções de entrega diretamente com a Karen.</p><a class="btn light" href="https://wa.me/5521991678120?text=Oi%2C%20Karen!%20Quero%20fazer%20um%20pedido." target="_blank" rel="noopener">Fazer pedido pelo WhatsApp ↗</a></div></section>
   </main>
@@ -379,7 +824,10 @@
   <form class="order-box" id="orderForm">
     <h2 id="orderTitle">Finalize seu pedido ♡</h2>
     <p class="order-description" id="orderDish"></p>
-
+<div class="order-field" id="extrasOrderField" hidden>
+  <label>Produtos adicionados ao pedido</label>
+  <div id="extrasList" class="extras-order-list"></div>
+</div>
     <div class="order-field">
       <label for="customerName">Seu nome *</label>
       <input id="customerName" name="customerName"
@@ -409,13 +857,127 @@
         <option value="G">Grande (G)</option>
       </select>
     </div>
+<div class="order-field extras-modal-section">
+  <label>🥤 Bebidas</label>
 
+  <div class="modal-extras-list">
+    <div class="modal-extra">
+      <div>
+        <strong>Coca-Cola Lata</strong>
+        <span>R$ 6,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Coca-Cola Lata', 6)">
+        Adicionar
+      </button>
+    </div>
+
+    <div class="modal-extra">
+      <div>
+        <strong>Guaraná</strong>
+        <span>R$ 5,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Guaraná', 5)">
+        Adicionar
+      </button>
+    </div>
+
+    <div class="modal-extra">
+      <div>
+        <strong>Suco Natural</strong>
+        <span>R$ 7,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Suco Natural', 7)">
+        Adicionar
+      </button>
+    </div>
+  </div>
+
+  <label>🍰 Sobremesas</label>
+
+  <div class="modal-extras-list">
+    <div class="modal-extra">
+      <div>
+        <strong>Pudim</strong>
+        <span>R$ 7,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Pudim', 7)">
+        Adicionar
+      </button>
+    </div>
+
+    <div class="modal-extra">
+      <div>
+        <strong>Mousse</strong>
+        <span>R$ 6,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Mousse', 6)">
+        Adicionar
+      </button>
+    </div>
+
+    <div class="modal-extra">
+      <div>
+        <strong>Brownie</strong>
+        <span>R$ 8,00</span>
+      </div>
+      <div class="quantity-control">
+        <button type="button" onclick="alterarQuantidade(this, -1)">−</button>
+        <span>1</span>
+        <button type="button" onclick="alterarQuantidade(this, 1)">+</button>
+      </div>
+      <button type="button" class="add"
+        onclick="adicionarExtraSelecionado(this, 'Brownie', 8)">
+        Adicionar
+      </button>
+    </div>
+  </div>
+</div>
     <div class="order-field" id="customPriceField" hidden>
       <label for="customPrice">Preço confirmado da marmita (R$) *</label>
       <input id="customPrice" type="number" min="0.01"
              step="0.01" placeholder="Informe o valor combinado">
     </div>
+<div id="extrasTotalRow" hidden>
+  <span>Bebidas e sobremesas</span>
+  <strong id="extrasTotal">R$ 0,00</strong>
+</div>
 
+<div id="extrasList" style="
+  font-size:12px;
+  line-height:1.7;
+  color:#6f6571;
+  margin-top:8px;
+"></div>
     <div class="order-total">
       <div>
         <span>Valor da marmita</span>
@@ -500,7 +1062,97 @@ const addressField = customerAddress.closest('.order-field');
 let selectedDish = '';
 let availablePrices = { P: 15, M: 18, G: 24 };
 let needsCustomPrice = false;
+let extrasPedido = [];
 
+function alterarQuantidade(botao, variacao) {
+  const controle = botao.closest('.quantity-control');
+  const numero = controle.querySelector('span');
+
+  let quantidade = Number(numero.textContent);
+  quantidade = Math.max(1, quantidade + variacao);
+
+  numero.textContent = quantidade;
+}
+
+function adicionarExtra(nome, preco, quantidade = 1) {
+  const existente = extrasPedido.find(item => item.nome === nome);
+
+  if (existente) {
+    existente.quantidade += quantidade;
+  } else {
+    extrasPedido.push({
+      nome,
+      preco: Number(preco),
+      quantidade: quantidade
+    });
+  }
+
+  atualizarTotal();
+}
+
+function adicionarExtraSelecionado(botao, nome, preco) {
+  const controle = botao.parentElement.querySelector('.quantity-control');
+  const quantidade = Number(controle.querySelector('span').textContent);
+
+  adicionarExtra(nome, preco, quantidade);
+
+  controle.querySelector('span').textContent = '1';
+}
+function calcularExtras() {
+  return extrasPedido.reduce(
+    (total, item) => total + item.preco * item.quantidade,
+    0
+  );
+}
+
+function listarExtras() {
+  return extrasPedido.map(item =>
+    `${item.quantidade}x ${item.nome} — ${money(item.preco * item.quantidade)}`
+  ).join('\n');
+}
+
+function renderizarExtras() {
+  const container = document.getElementById('extrasList');
+  const campo = document.getElementById('extrasOrderField');
+
+  container.innerHTML = '';
+
+  campo.hidden = extrasPedido.length === 0;
+
+  extrasPedido.forEach((item, index) => {
+    const linha = document.createElement('div');
+    linha.className = 'extra-order-item';
+
+    const info = document.createElement('div');
+    info.className = 'extra-order-info';
+
+    const nome = document.createElement('strong');
+    nome.textContent = item.nome;
+
+    const valor = document.createElement('span');
+    valor.textContent =
+      `${item.quantidade}x ${money(item.preco)} = ${money(item.quantidade * item.preco)}`;
+
+    info.append(nome, valor);
+
+    const acoes = document.createElement('div');
+    acoes.className = 'extra-order-actions';
+
+    const remover = document.createElement('button');
+    remover.type = 'button';
+    remover.className = 'extra-remove';
+    remover.textContent = 'Remover';
+
+    remover.addEventListener('click', () => {
+      extrasPedido.splice(index, 1);
+      atualizarTotal();
+    });
+
+    acoes.appendChild(remover);
+    linha.append(info, acoes);
+    container.appendChild(linha);
+  });
+}
 function money(value) {
   return Number(value).toLocaleString('pt-BR', {
     style: 'currency',
@@ -566,8 +1218,16 @@ function pedir(item) {
 
   orderModal.classList.add('open');
   document.getElementById('customerName').focus();
+  document.getElementById('customPriceField').hidden = false;
+  document.getElementById('customPriceField').hidden = true;
 }
-
+function ativarPrecoPersonalizado() {
+  needsCustomPrice = true;
+  customPriceField.hidden = false;
+  customPrice.required = true;
+  customPrice.focus();
+  atualizarTotal();
+}
 function atualizarTotal() {
   const size = orderSize.value;
 
@@ -577,11 +1237,26 @@ function atualizarTotal() {
 
   if (!Number.isFinite(price) || price < 0) price = 0;
 
+  const extrasTotal = calcularExtras();
   const deliveryFee = orderType.value === 'Entrega' ? 6 : 0;
 
+  const subtotal = price + extrasTotal;
+  const total = subtotal + deliveryFee;
+
   document.getElementById('mealTotal').textContent = money(price);
-  document.getElementById('finalTotal').textContent =
-    money(price + deliveryFee);
+
+  document.getElementById('extrasTotal').textContent =
+    money(extrasTotal);
+
+  document.getElementById('extrasTotalRow').hidden =
+    extrasTotal === 0;
+
+  renderizarExtras();
+
+  document.getElementById('finalTotal').textContent = money(total);
+
+  document.getElementById('deliveryFeeValue').textContent =
+    money(deliveryFee);
 }
 
 orderSize.addEventListener('change', atualizarTotal);
@@ -622,22 +1297,35 @@ orderForm.addEventListener('submit', async event => {
     return;
   }
 
-  const deliveryFee = isDelivery ? 6 : 0;
-  const total = price + deliveryFee;
+ const extrasTotal = calcularExtras();
+const deliveryFee = isDelivery ? 6 : 0;
 
-  const message =
-` *PEDIDO - COMIDA CASEIRA DA KAREN*
+const subtotal = price + extrasTotal;
+const total = subtotal + deliveryFee;
 
- *Cliente:* ${name}
- *Recebimento:* ${orderType.value}
-${isDelivery ? `📍 *Endereço:* ${address}` : ' *Retirada no local — sem taxa*'}
+const extrasTexto = listarExtras();
 
- *Prato:* ${selectedDish}
- *Tamanho:* ${size}
- *Valor da marmita:* ${money(price)}
- *Taxa de entrega:* ${money(deliveryFee)}
+const descricaoPedido = [
+  selectedDish,
+  extrasTexto ? 'ADICIONAIS:\n' + extrasTexto : ''
+].filter(Boolean).join('\n\n');
 
- *TOTAL: ${money(total)}*
+ const message =
+`*PEDIDO - COMIDA CASEIRA DA KAREN*
+
+*Cliente:* ${name}
+*Recebimento:* ${orderType.value}
+${isDelivery ? `📍 *Endereço:* ${address}` : '*Retirada no local — sem taxa*'}
+
+🍛 *MARMITA*
+*Prato:* ${selectedDish}
+*Tamanho:* ${size}
+*Valor:* ${money(price)}
+
+${extrasTexto ? `🛍️ *ADICIONAIS*\n${extrasTexto}\n*Subtotal dos adicionais:* ${money(extrasTotal)}\n` : ''}
+*Taxa de entrega:* ${money(deliveryFee)}
+
+*TOTAL: ${money(total)}*
 
 Aguardo a confirmação do pedido!`;
 
@@ -654,18 +1342,18 @@ Aguardo a confirmação do pedido!`;
     const { error } = await supabaseClient
       .from('orders')
       .insert([{
-        customer_name: name,
-        order_type: orderType.value,
-        address: address || null,
-        dish: selectedDish,
-        size: size,
-        meal_price: price,
-        delivery_fee: deliveryFee,
-        total: total,
-        status: 'novo',
-        is_manual: false,
-        notes: null
-      }]);
+  customer_name: name,
+  order_type: orderType.value,
+  address: address || null,
+  dish: descricaoPedido || selectedDish,
+  size: size,
+  meal_price: price + extrasTotal,
+  delivery_fee: deliveryFee,
+  total: total,
+  status: 'novo',
+  is_manual: false,
+  notes: extrasTexto || null
+}]);
 
     if (error) throw error;
 
@@ -836,6 +1524,77 @@ atualizarEndereco();
 })();
 
 </script>
+<script>
+(() => {
+  const carousel = document.getElementById("foodCarousel");
+  if (!carousel) return;
 
+  const track = carousel.querySelector(".food-carousel-track");
+  const slides = [...carousel.querySelectorAll(".food-slide")];
+  const dotsContainer = carousel.querySelector(".food-dots");
+  const prev = carousel.querySelector(".food-arrow.prev");
+  const next = carousel.querySelector(".food-arrow.next");
+
+  let current = 0;
+  let startX = 0;
+  let endX = 0;
+  let dragging = false;
+
+  slides.forEach((_, index) => {
+    const dot = document.createElement("button");
+    dot.className = "food-dot" + (index === 0 ? " active" : "");
+    dot.setAttribute("aria-label", `Ver imagem ${index + 1}`);
+    dot.addEventListener("click", () => goTo(index));
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = [...dotsContainer.children];
+
+  function update() {
+    track.style.transform = `translateX(-${current * 100}%)`;
+
+    slides.forEach((slide, index) => {
+      slide.classList.toggle("active", index === current);
+    });
+
+    dots.forEach((dot, index) => {
+      dot.classList.toggle("active", index === current);
+    });
+  }
+
+  function goTo(index) {
+    current = (index + slides.length) % slides.length;
+    update();
+  }
+
+  prev.addEventListener("click", () => goTo(current - 1));
+  next.addEventListener("click", () => goTo(current + 1));
+
+  carousel.addEventListener("pointerdown", event => {
+    startX = event.clientX;
+    endX = startX;
+    dragging = true;
+  });
+
+  carousel.addEventListener("pointermove", event => {
+    if (!dragging) return;
+    endX = event.clientX;
+  });
+
+  function finishDrag() {
+    if (!dragging) return;
+    dragging = false;
+
+    const distance = endX - startX;
+
+    if (Math.abs(distance) > 45) {
+      goTo(distance < 0 ? current + 1 : current - 1);
+    }
+  }
+
+  carousel.addEventListener("pointerup", finishDrag);
+  carousel.addEventListener("pointercancel", finishDrag);
+})();
+</script>
 </body>
 </html>
